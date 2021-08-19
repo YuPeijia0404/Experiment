@@ -1,12 +1,29 @@
 import matplotlib.pyplot as plt
-plt.plot([19.09988, 19.09988, 19.10932, 19.12868, 19.14572], [72.87479, 72.87479, 72.85358, 72.8552, 72.85237],label = '1')
-plt.plot([19.09988, 19.09988, 19.10465, 19.11222, 19.11458], [72.87479, 72.87479, 72.88658, 72.88842, 72.89984],label = '2')
-plt.plot([19.21628, 19.18983, 19.16373, 19.1341, 19.09973], [72.87064,72.85841,72.85825,72.85519,72.87561],label = '3')
-plt.plot([19.09988,19.09001,19.06089,19.06033,19.06668], [72.87479,72.84375,72.84928,72.85749,72.86757],label = '4')
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import *
+from pyspark import SparkContext
+
+spark = SparkSession.builder.appName("plot trajectory").getOrCreate()
+df = spark.read.csv('data/part-00000-18150c91-b97a-4fb6-ad34-4e01ea85f281-c000.csv', header=True)
+
+df = df.limit(10)
+
+trajectory_list = df.select(collect_list('trajectory')).first()[0]
+uuid_list = df.select(collect_list('uuid')).first()[0]
+
+for i in range(0, len(trajectory_list)):
+    # print(type(uuid_list[i]))
+    lan_array = []
+    lng_array = []
+    pins = trajectory_list[i].split(';')
+    for pin in pins:
+        pin_list = pin.split(',')
+        lan_array.append(float(pin_list[0]))
+        lng_array.append(float(pin_list[1]))
+    plt.plot(lan_array, lng_array,label=uuid_list[i])
+
+print('drawing')
 plt.legend()
 plt.show()
-
-
-         
          
               

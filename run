@@ -1,2 +1,2 @@
 cd spark_clustering
-python3 trajectory.py
+python3 clustering.py
