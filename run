@@ -1,0 +1,2 @@
+cd spark_clustering
+python3 trajectory.py
